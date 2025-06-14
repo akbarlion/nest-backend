@@ -12,7 +12,7 @@ import { MongooseModule } from '@nestjs/mongoose';
     AuthModule,
     UsersModule,
     ChatModule,
-    MongooseModule.forRoot('mongodb://localhost:27017/'),
+    MongooseModule.forRoot('mongodb://localhost:27017/')
   ],
   controllers: [AppController],
   providers: [AppService],

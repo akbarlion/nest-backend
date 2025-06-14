@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable prettier/prettier */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-return */
@@ -9,12 +10,14 @@ import { Model } from 'mongoose';
 import * as bcrypt from 'bcryptjs';
 
 import { User, UserDocument } from './schemas/users.schema';
+import { Profile, ProfileDocument } from './schemas/profile.schema';
 import { RegisterDto } from 'src/auth/dto/register.dto/register.dto';
 
 @Injectable()
 export class UserService {
     constructor(
         @InjectModel(User.name) private userModel: Model<UserDocument>,
+        @InjectModel(Profile.name) private profileModel: Model<ProfileDocument>,
     ) { }
 
     async createUser(registerDto: RegisterDto): Promise<User> {
@@ -30,6 +33,30 @@ export class UserService {
 
         return newUser.save();
     }
+
+    async createProfile(userId: string, data: any) {
+        const profile = new this.profileModel({
+            userId,
+            name: data.name,
+            birthday: data.birthday,
+            height: data.height,
+            weight: data.weight,
+            interests: data.interests,
+            zodiac: data.zodiac,
+            horoscope: data.horoscope
+        });
+
+        return await profile.save();
+    }
+
+    async getProfile(userId: string) {
+        return await this.profileModel.findOne({ userId }).exec();
+    }
+
+    async updateProfile(userId: string, data: any) {
+        return await this.profileModel.findOneAndUpdate({ userId }, data, { new: true });
+    }
+
 
     // 🔍 Cari user pake email atau username
     async findByEmailOrUsername(identifier: string): Promise<User | null> {
